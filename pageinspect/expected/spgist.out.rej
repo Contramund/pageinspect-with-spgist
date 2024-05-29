@@ -1,0 +1,1548 @@
+--- page.out	2024-02-07 15:01:23.106059940 +0300
++++ page.out	2024-05-25 17:00:33.379888873 +0300
+@@ -1,4 +1,5 @@
+ CREATE EXTENSION pageinspect;
++ERROR:  syntax error at or near "offset"
+ -- Use a temp table so that effects of VACUUM are predictable
+ CREATE TEMP TABLE test1 (a int, b int);
+ INSERT INTO test1 VALUES (16777217, 131584);
+@@ -6,236 +7,203 @@
+ -- The page contents can vary, so just test that it can be read
+ -- successfully, but don't keep the output.
+ SELECT octet_length(get_raw_page('test1', 'main', 0)) AS main_0;
+- main_0 
+---------
+-   8192
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'main', 0)) AS mai...
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('test1', 'main', 1)) AS main_1;
+-ERROR:  block number 1 is out of range for relation "test1"
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'main', 1)) AS mai...
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('test1', 'fsm', 0)) AS fsm_0;
+- fsm_0 
+--------
+-  8192
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'fsm', 0)) AS fsm_...
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('test1', 'fsm', 1)) AS fsm_1;
+- fsm_1 
+--------
+-  8192
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'fsm', 1)) AS fsm_...
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('test1', 'vm', 0)) AS vm_0;
+- vm_0 
+-------
+- 8192
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'vm', 0)) AS vm_0;
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('test1', 'vm', 1)) AS vm_1;
+-ERROR:  block number 1 is out of range for relation "test1"
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'vm', 1)) AS vm_1;
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('test1', 'main', -1));
+-ERROR:  invalid block number
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'main', -1));
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('xxx', 'main', 0));
+-ERROR:  relation "xxx" does not exist
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('xxx', 'main', 0));
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT octet_length(get_raw_page('test1', 'xxx', 0));
+-ERROR:  invalid fork name
+-HINT:  Valid fork names are "main", "fsm", "vm", and "init".
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT octet_length(get_raw_page('test1', 'xxx', 0));
++                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT get_raw_page('test1', 0) = get_raw_page('test1', 'main', 0);
+- ?column? 
+-----------
+- t
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT get_raw_page('test1', 0) = get_raw_page('test1', 'mai...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT pagesize, version FROM page_header(get_raw_page('test1', 0));
+- pagesize | version 
+-----------+---------
+-     8192 |       4
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT pagesize, version FROM page_header(get_raw_page('test...
++                                                  ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT page_checksum(get_raw_page('test1', 0), 0) IS NOT NULL AS silly_checksum_test;
+- silly_checksum_test 
+----------------------
+- t
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT page_checksum(get_raw_page('test1', 0), 0) IS NOT NUL...
++                             ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT page_checksum(get_raw_page('test1', 0), -1);
+-ERROR:  invalid block number
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT page_checksum(get_raw_page('test1', 0), -1);
++                             ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT tuple_data_split('test1'::regclass, t_data, t_infomask, t_infomask2, t_bits)
+     FROM heap_page_items(get_raw_page('test1', 0));
+-       tuple_data_split        
+--------------------------------
+- {"\\x01000001","\\x00020200"}
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 2:     FROM heap_page_items(get_raw_page('test1', 0));
++                                 ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM fsm_page_contents(get_raw_page('test1', 'fsm', 0));
+- fsm_page_contents 
+--------------------
+- 0: 254           +
+- 1: 254           +
+- 3: 254           +
+- 7: 254           +
+- 15: 254          +
+- 31: 254          +
+- 63: 254          +
+- 127: 254         +
+- 255: 254         +
+- 511: 254         +
+- 1023: 254        +
+- 2047: 254        +
+- 4095: 254        +
+- fp_next_slot: 0  +
+- 
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, unknown, integer) does not exist
++LINE 1: SELECT * FROM fsm_page_contents(get_raw_page('test1', 'fsm',...
++                                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- If we freeze the only tuple on test1, the infomask should
+ -- always be the same in all test runs.
+ VACUUM (FREEZE, DISABLE_PAGE_SKIPPING) test1;
+ SELECT t_infomask, t_infomask2, raw_flags, combined_flags
+ FROM heap_page_items(get_raw_page('test1', 0)),
+      LATERAL heap_tuple_infomask_flags(t_infomask, t_infomask2);
+- t_infomask | t_infomask2 |                         raw_flags                         |   combined_flags   
+-------------+-------------+-----------------------------------------------------------+--------------------
+-       2816 |           2 | {HEAP_XMIN_COMMITTED,HEAP_XMIN_INVALID,HEAP_XMAX_INVALID} | {HEAP_XMIN_FROZEN}
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 2: FROM heap_page_items(get_raw_page('test1', 0)),
++                             ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- tests for decoding of combined flags
+ -- HEAP_XMAX_SHR_LOCK = (HEAP_XMAX_EXCL_LOCK | HEAP_XMAX_KEYSHR_LOCK)
+ SELECT * FROM heap_tuple_infomask_flags(x'0050'::int, 0);
+-                  raw_flags                  |    combined_flags    
+----------------------------------------------+----------------------
+- {HEAP_XMAX_KEYSHR_LOCK,HEAP_XMAX_EXCL_LOCK} | {HEAP_XMAX_SHR_LOCK}
+-(1 row)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 1: SELECT * FROM heap_tuple_infomask_flags(x'0050'::int, 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- HEAP_XMIN_FROZEN = (HEAP_XMIN_COMMITTED | HEAP_XMIN_INVALID)
+ SELECT * FROM heap_tuple_infomask_flags(x'0300'::int, 0);
+-                raw_flags                |   combined_flags   
+------------------------------------------+--------------------
+- {HEAP_XMIN_COMMITTED,HEAP_XMIN_INVALID} | {HEAP_XMIN_FROZEN}
+-(1 row)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 1: SELECT * FROM heap_tuple_infomask_flags(x'0300'::int, 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- HEAP_MOVED = (HEAP_MOVED_IN | HEAP_MOVED_OFF)
+ SELECT * FROM heap_tuple_infomask_flags(x'C000'::int, 0);
+-           raw_flags            | combined_flags 
+---------------------------------+----------------
+- {HEAP_MOVED_OFF,HEAP_MOVED_IN} | {HEAP_MOVED}
+-(1 row)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 1: SELECT * FROM heap_tuple_infomask_flags(x'C000'::int, 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM heap_tuple_infomask_flags(x'C000'::int, 0);
+-           raw_flags            | combined_flags 
+---------------------------------+----------------
+- {HEAP_MOVED_OFF,HEAP_MOVED_IN} | {HEAP_MOVED}
+-(1 row)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 1: SELECT * FROM heap_tuple_infomask_flags(x'C000'::int, 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- test all flags of t_infomask and t_infomask2
+ SELECT unnest(raw_flags)
+   FROM heap_tuple_infomask_flags(x'FFFF'::int, x'FFFF'::int) ORDER BY 1;
+-        unnest         
+------------------------
+- HEAP_COMBOCID
+- HEAP_HASEXTERNAL
+- HEAP_HASNULL
+- HEAP_HASOID_OLD
+- HEAP_HASVARWIDTH
+- HEAP_HOT_UPDATED
+- HEAP_KEYS_UPDATED
+- HEAP_MOVED_IN
+- HEAP_MOVED_OFF
+- HEAP_ONLY_TUPLE
+- HEAP_UPDATED
+- HEAP_XMAX_COMMITTED
+- HEAP_XMAX_EXCL_LOCK
+- HEAP_XMAX_INVALID
+- HEAP_XMAX_IS_MULTI
+- HEAP_XMAX_KEYSHR_LOCK
+- HEAP_XMAX_LOCK_ONLY
+- HEAP_XMIN_COMMITTED
+- HEAP_XMIN_INVALID
+-(19 rows)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 2:   FROM heap_tuple_infomask_flags(x'FFFF'::int, x'FFFF'::int)...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT unnest(combined_flags)
+   FROM heap_tuple_infomask_flags(x'FFFF'::int, x'FFFF'::int) ORDER BY 1;
+-       unnest       
+---------------------
+- HEAP_MOVED
+- HEAP_XMAX_SHR_LOCK
+- HEAP_XMIN_FROZEN
+-(3 rows)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 2:   FROM heap_tuple_infomask_flags(x'FFFF'::int, x'FFFF'::int)...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- no flags at all
+ SELECT * FROM heap_tuple_infomask_flags(0, 0);
+- raw_flags | combined_flags 
+------------+----------------
+- {}        | {}
+-(1 row)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 1: SELECT * FROM heap_tuple_infomask_flags(0, 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- no combined flags
+ SELECT * FROM heap_tuple_infomask_flags(x'0010'::int, 0);
+-        raw_flags        | combined_flags 
+--------------------------+----------------
+- {HEAP_XMAX_KEYSHR_LOCK} | {}
+-(1 row)
+-
++ERROR:  function heap_tuple_infomask_flags(integer, integer) does not exist
++LINE 1: SELECT * FROM heap_tuple_infomask_flags(x'0010'::int, 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ DROP TABLE test1;
+ -- check that using any of these functions with a partitioned table or index
+ -- would fail
+ create table test_partitioned (a int) partition by range (a);
+ create index test_partitioned_index on test_partitioned (a);
+ select get_raw_page('test_partitioned', 0); -- error about partitioned table
+-ERROR:  cannot get raw page from relation "test_partitioned"
+-DETAIL:  This operation is not supported for partitioned tables.
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: select get_raw_page('test_partitioned', 0);
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ select get_raw_page('test_partitioned_index', 0); -- error about partitioned index
+-ERROR:  cannot get raw page from relation "test_partitioned_index"
+-DETAIL:  This operation is not supported for partitioned indexes.
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: select get_raw_page('test_partitioned_index', 0);
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- a regular table which is a member of a partition set should work though
+ create table test_part1 partition of test_partitioned for values from ( 1 ) to (100);
+ select get_raw_page('test_part1', 0); -- get farther and error about empty table
+-ERROR:  block number 0 is out of range for relation "test_part1"
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: select get_raw_page('test_part1', 0);
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ drop table test_partitioned;
+ -- check null bitmap alignment for table whose number of attributes is multiple of 8
+ create table test8 (f1 int, f2 int, f3 int, f4 int, f5 int, f6 int, f7 int, f8 int);
+ insert into test8(f1, f8) values (x'7f00007f'::int, 0);
+ select t_bits, t_data from heap_page_items(get_raw_page('test8', 0));
+-  t_bits  |       t_data       
+-----------+--------------------
+- 10000001 | \x7f00007f00000000
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: select t_bits, t_data from heap_page_items(get_raw_page('tes...
++                                                   ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ select tuple_data_split('test8'::regclass, t_data, t_infomask, t_infomask2, t_bits)
+     from heap_page_items(get_raw_page('test8', 0));
+-                      tuple_data_split                       
+--------------------------------------------------------------
+- {"\\x7f00007f",NULL,NULL,NULL,NULL,NULL,NULL,"\\x00000000"}
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 2:     from heap_page_items(get_raw_page('test8', 0));
++                                 ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ drop table test8;
+ -- Failure with incorrect page size
+ -- Suppress the DETAIL message, to allow the tests to work across various
+ -- page sizes.
+ \set VERBOSITY terse
+ SELECT fsm_page_contents('aaa'::bytea);
+-ERROR:  invalid page size
++ERROR:  function fsm_page_contents(bytea) does not exist at character 8
+ SELECT page_checksum('bbb'::bytea, 0);
+-ERROR:  invalid page size
++ERROR:  function page_checksum(bytea, integer) does not exist at character 8
+ SELECT page_header('ccc'::bytea);
+-ERROR:  invalid page size
++ERROR:  function page_header(bytea) does not exist at character 8
+ \set VERBOSITY default
+ -- Tests with all-zero pages.
+ SHOW block_size \gset
+ SELECT fsm_page_contents(decode(repeat('00', :block_size), 'hex'));
+- fsm_page_contents 
+--------------------
+- 
+-(1 row)
+-
++ERROR:  function fsm_page_contents(bytea) does not exist
++LINE 1: SELECT fsm_page_contents(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT page_header(decode(repeat('00', :block_size), 'hex'));
+-      page_header      
+------------------------
+- (0/0,0,0,0,0,0,0,0,0)
+-(1 row)
+-
++ERROR:  function page_header(bytea) does not exist
++LINE 1: SELECT page_header(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT page_checksum(decode(repeat('00', :block_size), 'hex'), 1);
+- page_checksum 
+----------------
+-              
+-(1 row)
+-
++ERROR:  function page_checksum(bytea, integer) does not exist
++LINE 1: SELECT page_checksum(decode(repeat('00', 8192), 'hex'), 1);
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+--- btree.out	2024-02-07 15:01:23.105059940 +0300
++++ btree.out	2024-05-25 17:00:33.394888874 +0300
+@@ -3,219 +3,153 @@
+ CREATE INDEX test1_a_idx ON test1 USING btree (a);
+ \x
+ SELECT * FROM bt_metap('test1_a_idx');
+--[ RECORD 1 ]-------------+-------
+-magic                     | 340322
+-version                   | 4
+-root                      | 1
+-level                     | 0
+-fastroot                  | 1
+-fastlevel                 | 0
+-last_cleanup_num_delpages | 0
+-last_cleanup_num_tuples   | -1
+-allequalimage             | t
+-
++ERROR:  function bt_metap(unknown) does not exist
++LINE 1: SELECT * FROM bt_metap('test1_a_idx');
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_stats('test1_a_idx', -1);
+-ERROR:  invalid block number -1
++ERROR:  function bt_page_stats(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_stats('test1_a_idx', -1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_stats('test1_a_idx', 0);
+-ERROR:  block 0 is a meta page
++ERROR:  function bt_page_stats(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_stats('test1_a_idx', 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_stats('test1_a_idx', 1);
+--[ RECORD 1 ]-+-----
+-blkno         | 1
+-type          | l
+-live_items    | 1
+-dead_items    | 0
+-avg_item_size | 16
+-page_size     | 8192
+-free_size     | 8128
+-btpo_prev     | 0
+-btpo_next     | 0
+-btpo_level    | 0
+-btpo_flags    | 3
+-
++ERROR:  function bt_page_stats(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_stats('test1_a_idx', 1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_stats('test1_a_idx', 2);
+-ERROR:  block number 2 is out of range
++ERROR:  function bt_page_stats(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_stats('test1_a_idx', 2);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- bt_multi_page_stats() function returns a set of records of page statistics.
+ CREATE TABLE test2 AS (SELECT generate_series(1, 1000)::int8 AS col1);
+ CREATE INDEX test2_col1_idx ON test2(col1);
+ SELECT * FROM bt_multi_page_stats('test2_col1_idx', 0, 1);
+-ERROR:  block 0 is a meta page
++ERROR:  function bt_multi_page_stats(unknown, integer, integer) does not exist
++LINE 1: SELECT * FROM bt_multi_page_stats('test2_col1_idx', 0, 1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_multi_page_stats('test2_col1_idx', 1, -1);
+--[ RECORD 1 ]-+-----
+-blkno         | 1
+-type          | l
+-live_items    | 367
+-dead_items    | 0
+-avg_item_size | 16
+-page_size     | 8192
+-free_size     | 808
+-btpo_prev     | 0
+-btpo_next     | 2
+-btpo_level    | 0
+-btpo_flags    | 1
+--[ RECORD 2 ]-+-----
+-blkno         | 2
+-type          | l
+-live_items    | 367
+-dead_items    | 0
+-avg_item_size | 16
+-page_size     | 8192
+-free_size     | 808
+-btpo_prev     | 1
+-btpo_next     | 4
+-btpo_level    | 0
+-btpo_flags    | 1
+--[ RECORD 3 ]-+-----
+-blkno         | 3
+-type          | r
+-live_items    | 3
+-dead_items    | 0
+-avg_item_size | 13
+-page_size     | 8192
+-free_size     | 8096
+-btpo_prev     | 0
+-btpo_next     | 0
+-btpo_level    | 1
+-btpo_flags    | 2
+--[ RECORD 4 ]-+-----
+-blkno         | 4
+-type          | l
+-live_items    | 268
+-dead_items    | 0
+-avg_item_size | 16
+-page_size     | 8192
+-free_size     | 2788
+-btpo_prev     | 2
+-btpo_next     | 0
+-btpo_level    | 0
+-btpo_flags    | 1
+-
++ERROR:  function bt_multi_page_stats(unknown, integer, integer) does not exist
++LINE 1: SELECT * FROM bt_multi_page_stats('test2_col1_idx', 1, -1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_multi_page_stats('test2_col1_idx', 1, 0);
+-(0 rows)
+-
++ERROR:  function bt_multi_page_stats(unknown, integer, integer) does not exist
++LINE 1: SELECT * FROM bt_multi_page_stats('test2_col1_idx', 1, 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_multi_page_stats('test2_col1_idx', 1, 2);
+--[ RECORD 1 ]-+-----
+-blkno         | 1
+-type          | l
+-live_items    | 367
+-dead_items    | 0
+-avg_item_size | 16
+-page_size     | 8192
+-free_size     | 808
+-btpo_prev     | 0
+-btpo_next     | 2
+-btpo_level    | 0
+-btpo_flags    | 1
+--[ RECORD 2 ]-+-----
+-blkno         | 2
+-type          | l
+-live_items    | 367
+-dead_items    | 0
+-avg_item_size | 16
+-page_size     | 8192
+-free_size     | 808
+-btpo_prev     | 1
+-btpo_next     | 4
+-btpo_level    | 0
+-btpo_flags    | 1
+-
++ERROR:  function bt_multi_page_stats(unknown, integer, integer) does not exist
++LINE 1: SELECT * FROM bt_multi_page_stats('test2_col1_idx', 1, 2);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_multi_page_stats('test2_col1_idx', 3, 2);
+--[ RECORD 1 ]-+-----
+-blkno         | 3
+-type          | r
+-live_items    | 3
+-dead_items    | 0
+-avg_item_size | 13
+-page_size     | 8192
+-free_size     | 8096
+-btpo_prev     | 0
+-btpo_next     | 0
+-btpo_level    | 1
+-btpo_flags    | 2
+--[ RECORD 2 ]-+-----
+-blkno         | 4
+-type          | l
+-live_items    | 268
+-dead_items    | 0
+-avg_item_size | 16
+-page_size     | 8192
+-free_size     | 2788
+-btpo_prev     | 2
+-btpo_next     | 0
+-btpo_level    | 0
+-btpo_flags    | 1
+-
++ERROR:  function bt_multi_page_stats(unknown, integer, integer) does not exist
++LINE 1: SELECT * FROM bt_multi_page_stats('test2_col1_idx', 3, 2);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_multi_page_stats('test2_col1_idx', 7, 2);
+-ERROR:  block number 7 is out of range
++ERROR:  function bt_multi_page_stats(unknown, integer, integer) does not exist
++LINE 1: SELECT * FROM bt_multi_page_stats('test2_col1_idx', 7, 2);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ DROP TABLE test2;
+ SELECT * FROM bt_page_items('test1_a_idx', -1);
+-ERROR:  invalid block number -1
++ERROR:  function bt_page_items(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items('test1_a_idx', -1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_items('test1_a_idx', 0);
+-ERROR:  block 0 is a meta page
++ERROR:  function bt_page_items(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items('test1_a_idx', 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_items('test1_a_idx', 1);
+--[ RECORD 1 ]-----------------------
+-itemoffset | 1
+-ctid       | (0,1)
+-itemlen    | 16
+-nulls      | f
+-vars       | f
+-data       | 01 00 00 00 00 00 00 01
+-dead       | f
+-htid       | (0,1)
+-tids       | 
+-
++ERROR:  function bt_page_items(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items('test1_a_idx', 1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_items('test1_a_idx', 2);
+-ERROR:  block number 2 is out of range
++ERROR:  function bt_page_items(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items('test1_a_idx', 2);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', -1));
+-ERROR:  invalid block number
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', -1))...
++                                    ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', 0));
+-ERROR:  block is a meta page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', 0));
++                                    ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', 1));
+--[ RECORD 1 ]-----------------------
+-itemoffset | 1
+-ctid       | (0,1)
+-itemlen    | 16
+-nulls      | f
+-vars       | f
+-data       | 01 00 00 00 00 00 00 01
+-dead       | f
+-htid       | (0,1)
+-tids       | 
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', 1));
++                                    ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', 2));
+-ERROR:  block number 2 is out of range for relation "test1_a_idx"
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM bt_page_items(get_raw_page('test1_a_idx', 2));
++                                    ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Failure when using a non-btree index.
+ CREATE INDEX test1_a_hash ON test1 USING hash(a);
+ SELECT bt_metap('test1_a_hash');
+-ERROR:  "test1_a_hash" is not a btree index
++ERROR:  function bt_metap(unknown) does not exist
++LINE 1: SELECT bt_metap('test1_a_hash');
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT bt_page_stats('test1_a_hash', 0);
+-ERROR:  "test1_a_hash" is not a btree index
++ERROR:  function bt_page_stats(unknown, integer) does not exist
++LINE 1: SELECT bt_page_stats('test1_a_hash', 0);
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT bt_page_items('test1_a_hash', 0);
+-ERROR:  "test1_a_hash" is not a btree index
++ERROR:  function bt_page_items(unknown, integer) does not exist
++LINE 1: SELECT bt_page_items('test1_a_hash', 0);
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT bt_page_items(get_raw_page('test1_a_hash', 0));
+-ERROR:  block is a meta page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT bt_page_items(get_raw_page('test1_a_hash', 0));
++                             ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ CREATE INDEX test1_b_gist ON test1 USING gist(b);
+ -- Special area of GiST is the same as btree, this complains about inconsistent
+ -- leaf data on the page.
+ SELECT bt_page_items(get_raw_page('test1_b_gist', 0));
+-ERROR:  block is not a valid btree leaf page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT bt_page_items(get_raw_page('test1_b_gist', 0));
++                             ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Several failure modes.
+ -- Suppress the DETAIL message, to allow the tests to work across various
+ -- page sizes and architectures.
+ \set VERBOSITY terse
+ -- invalid page size
+ SELECT bt_page_items('aaa'::bytea);
+-ERROR:  invalid page size
++ERROR:  function bt_page_items(bytea) does not exist at character 8
+ -- invalid special area size
+ CREATE INDEX test1_a_brin ON test1 USING brin(a);
+ SELECT bt_page_items(get_raw_page('test1', 0));
+-ERROR:  input page is not a valid btree page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 22
+ SELECT bt_page_items(get_raw_page('test1_a_brin', 0));
+-ERROR:  input page is not a valid btree page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 22
+ \set VERBOSITY default
+ -- Tests with all-zero pages.
+ SHOW block_size \gset
+ SELECT bt_page_items(decode(repeat('00', :block_size), 'hex'));
+--[ RECORD 1 ]-+-
+-bt_page_items | 
+-
++ERROR:  function bt_page_items(bytea) does not exist
++LINE 1: SELECT bt_page_items(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ DROP TABLE test1;
+--- brin.out	2024-02-07 15:01:23.105059940 +0300
++++ brin.out	2024-05-25 17:00:33.407888874 +0300
+@@ -2,93 +2,84 @@
+ INSERT INTO test1 VALUES (1, 'one');
+ CREATE INDEX test1_a_idx ON test1 USING brin (a);
+ SELECT brin_page_type(get_raw_page('test1_a_idx', 0));
+- brin_page_type 
+-----------------
+- meta
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT brin_page_type(get_raw_page('test1_a_idx', 0));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT brin_page_type(get_raw_page('test1_a_idx', 1));
+- brin_page_type 
+-----------------
+- revmap
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT brin_page_type(get_raw_page('test1_a_idx', 1));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT brin_page_type(get_raw_page('test1_a_idx', 2));
+- brin_page_type 
+-----------------
+- regular
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT brin_page_type(get_raw_page('test1_a_idx', 2));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM brin_metapage_info(get_raw_page('test1_a_idx', 0));
+-   magic    | version | pagesperrange | lastrevmappage 
+-------------+---------+---------------+----------------
+- 0xA8109CFA |       1 |           128 |              1
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM brin_metapage_info(get_raw_page('test1_a_idx',...
++                                         ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM brin_metapage_info(get_raw_page('test1_a_idx', 1));
+-ERROR:  page is not a BRIN page of type "metapage"
+-DETAIL:  Expected special type 0000f091, got 0000f092.
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM brin_metapage_info(get_raw_page('test1_a_idx',...
++                                         ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM brin_revmap_data(get_raw_page('test1_a_idx', 0)) LIMIT 5;
+-ERROR:  page is not a BRIN page of type "revmap"
+-DETAIL:  Expected special type 0000f092, got 0000f091.
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM brin_revmap_data(get_raw_page('test1_a_idx', 0...
++                                       ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM brin_revmap_data(get_raw_page('test1_a_idx', 1)) LIMIT 5;
+- pages 
+--------
+- (2,1)
+- (0,0)
+- (0,0)
+- (0,0)
+- (0,0)
+-(5 rows)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM brin_revmap_data(get_raw_page('test1_a_idx', 1...
++                                       ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM brin_page_items(get_raw_page('test1_a_idx', 2), 'test1_a_idx')
+     ORDER BY blknum, attnum LIMIT 5;
+- itemoffset | blknum | attnum | allnulls | hasnulls | placeholder | empty |  value   
+-------------+--------+--------+----------+----------+-------------+-------+----------
+-          1 |      0 |      1 | f        | f        | f           | f     | {1 .. 1}
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM brin_page_items(get_raw_page('test1_a_idx', 2)...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Mask DETAIL messages as these are not portable across architectures.
+ \set VERBOSITY terse
+ -- Failures for non-BRIN index.
+ CREATE INDEX test1_a_btree ON test1 (a);
+ SELECT brin_page_items(get_raw_page('test1_a_btree', 0), 'test1_a_btree');
+-ERROR:  "test1_a_btree" is not a BRIN index
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 24
+ SELECT brin_page_items(get_raw_page('test1_a_btree', 0), 'test1_a_idx');
+-ERROR:  input page is not a valid BRIN page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 24
+ -- Invalid special area size
+ SELECT brin_page_type(get_raw_page('test1', 0));
+-ERROR:  input page is not a valid BRIN page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 23
+ SELECT * FROM brin_metapage_info(get_raw_page('test1', 0));
+-ERROR:  input page is not a valid BRIN page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 34
+ SELECT * FROM brin_revmap_data(get_raw_page('test1', 0));
+-ERROR:  input page is not a valid BRIN page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 32
+ \set VERBOSITY default
+ -- Tests with all-zero pages.
+ SHOW block_size \gset
+ SELECT brin_page_type(decode(repeat('00', :block_size), 'hex'));
+- brin_page_type 
+-----------------
+- 
+-(1 row)
+-
++ERROR:  function brin_page_type(bytea) does not exist
++LINE 1: SELECT brin_page_type(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT brin_page_items(decode(repeat('00', :block_size), 'hex'), 'test1_a_idx');
+- brin_page_items 
+------------------
+-(0 rows)
+-
++ERROR:  function brin_page_items(bytea, unknown) does not exist
++LINE 1: SELECT brin_page_items(decode(repeat('00', 8192), 'hex'), 't...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT brin_metapage_info(decode(repeat('00', :block_size), 'hex'));
+- brin_metapage_info 
+---------------------
+- 
+-(1 row)
+-
++ERROR:  function brin_metapage_info(bytea) does not exist
++LINE 1: SELECT brin_metapage_info(decode(repeat('00', 8192), 'hex'))...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT brin_revmap_data(decode(repeat('00', :block_size), 'hex'));
+- brin_revmap_data 
+-------------------
+- 
+-(1 row)
+-
++ERROR:  function brin_revmap_data(bytea) does not exist
++LINE 1: SELECT brin_revmap_data(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Test that partial indexes have all pages, including empty ones.
+ CREATE TABLE test2 (a int);
+ INSERT INTO test2 SELECT i FROM generate_series(1,1000) s(i);
+@@ -101,10 +92,9 @@
+  FROM generate_series((SELECT (lastrevmappage + 1) FROM brin_metapage_info(get_raw_page('test2_a_idx', 0))),
+                       (SELECT (relpages - 1) FROM pg_class WHERE relname = 'test2_a_idx')) AS pages(p),
+       LATERAL brin_page_items(get_raw_page('test2_a_idx', p), 'test2_a_idx') AS items;
+- ranges_do_match 
+------------------
+- t
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 2: ...LECT (lastrevmappage + 1) FROM brin_metapage_info(get_raw_pa...
++                                                             ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ DROP TABLE test1;
+ DROP TABLE test2;
+--- gin.out	2024-02-07 15:01:23.106059940 +0300
++++ gin.out	2024-05-25 17:00:33.457888875 +0300
+@@ -3,69 +3,68 @@
+ CREATE INDEX test1_y_idx ON test1 USING gin (y) WITH (fastupdate = off);
+ \x
+ SELECT * FROM gin_metapage_info(get_raw_page('test1_y_idx', 0));
+--[ RECORD 1 ]----+-----------
+-pending_head     | 4294967295
+-pending_tail     | 4294967295
+-tail_free_size   | 0
+-n_pending_pages  | 0
+-n_pending_tuples | 0
+-n_total_pages    | 2
+-n_entry_pages    | 1
+-n_data_pages     | 0
+-n_entries        | 2
+-version          | 2
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM gin_metapage_info(get_raw_page('test1_y_idx', ...
++                                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM gin_metapage_info(get_raw_page('test1_y_idx', 1));
+-ERROR:  input page is not a GIN metapage
+-DETAIL:  Flags 0002, expected 0008
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM gin_metapage_info(get_raw_page('test1_y_idx', ...
++                                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM gin_page_opaque_info(get_raw_page('test1_y_idx', 1));
+--[ RECORD 1 ]---------
+-rightlink | 4294967295
+-maxoff    | 0
+-flags     | {leaf}
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM gin_page_opaque_info(get_raw_page('test1_y_idx...
++                                           ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM gin_leafpage_items(get_raw_page('test1_y_idx', 1));
+-ERROR:  input page is not a compressed GIN data leaf page
+-DETAIL:  Flags 0002, expected 0083
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM gin_leafpage_items(get_raw_page('test1_y_idx',...
++                                         ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ INSERT INTO test1 SELECT x, ARRAY[1,10] FROM generate_series(2,10000) x;
+ SELECT COUNT(*) > 0
+ FROM gin_leafpage_items(get_raw_page('test1_y_idx',
+                         (pg_relation_size('test1_y_idx') /
+                          current_setting('block_size')::bigint)::int - 1));
+--[ RECORD 1 ]
+-?column? | t
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 2: FROM gin_leafpage_items(get_raw_page('test1_y_idx',
++                                ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Failure with various modes.
+ -- Suppress the DETAIL message, to allow the tests to work across various
+ -- page sizes and architectures.
+ \set VERBOSITY terse
+ -- invalid page size
+ SELECT gin_leafpage_items('aaa'::bytea);
+-ERROR:  invalid page size
++ERROR:  function gin_leafpage_items(bytea) does not exist at character 8
+ SELECT gin_metapage_info('bbb'::bytea);
+-ERROR:  invalid page size
++ERROR:  function gin_metapage_info(bytea) does not exist at character 8
+ SELECT gin_page_opaque_info('ccc'::bytea);
+-ERROR:  invalid page size
++ERROR:  function gin_page_opaque_info(bytea) does not exist at character 8
+ -- invalid special area size
+ SELECT * FROM gin_metapage_info(get_raw_page('test1', 0));
+-ERROR:  input page is not a valid GIN metapage
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 33
+ SELECT * FROM gin_page_opaque_info(get_raw_page('test1', 0));
+-ERROR:  input page is not a valid GIN data leaf page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 36
+ SELECT * FROM gin_leafpage_items(get_raw_page('test1', 0));
+-ERROR:  input page is not a valid GIN data leaf page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 34
+ \set VERBOSITY default
+ -- Tests with all-zero pages.
+ SHOW block_size \gset
+ SELECT gin_leafpage_items(decode(repeat('00', :block_size), 'hex'));
+--[ RECORD 1 ]------+-
+-gin_leafpage_items | 
+-
++ERROR:  function gin_leafpage_items(bytea) does not exist
++LINE 1: SELECT gin_leafpage_items(decode(repeat('00', 8192), 'hex'))...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT gin_metapage_info(decode(repeat('00', :block_size), 'hex'));
+--[ RECORD 1 ]-----+-
+-gin_metapage_info | 
+-
++ERROR:  function gin_metapage_info(bytea) does not exist
++LINE 1: SELECT gin_metapage_info(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT gin_page_opaque_info(decode(repeat('00', :block_size), 'hex'));
+--[ RECORD 1 ]--------+-
+-gin_page_opaque_info | 
+-
++ERROR:  function gin_page_opaque_info(bytea) does not exist
++LINE 1: SELECT gin_page_opaque_info(decode(repeat('00', 8192), 'hex'...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ DROP TABLE test1;
+--- gist.out	2024-02-07 15:01:23.106059940 +0300
++++ gist.out	2024-05-25 17:00:33.508888877 +0300
+@@ -12,122 +12,96 @@
+ CREATE INDEX test_gist_idx ON test_gist USING gist (p);
+ -- Page 0 is the root, the rest are leaf pages
+ SELECT * FROM gist_page_opaque_info(get_raw_page('test_gist_idx', 0));
+- lsn | nsn | rightlink  | flags 
+------+-----+------------+-------
+- 0/1 | 0/0 | 4294967295 | {}
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM gist_page_opaque_info(get_raw_page('test_gist_...
++                                            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM gist_page_opaque_info(get_raw_page('test_gist_idx', 1));
+- lsn | nsn | rightlink  | flags  
+------+-----+------------+--------
+- 0/1 | 0/0 | 4294967295 | {leaf}
+-(1 row)
+-
++ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ SELECT * FROM gist_page_opaque_info(get_raw_page('test_gist_idx', 2));
+- lsn | nsn | rightlink | flags  
+------+-----+-----------+--------
+- 0/1 | 0/0 |         1 | {leaf}
+-(1 row)
+-
++ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ COMMIT;
+ SELECT * FROM gist_page_items(get_raw_page('test_gist_idx', 0), 'test_gist_idx');
+- itemoffset |   ctid    | itemlen | dead |             keys              
+-------------+-----------+---------+------+-------------------------------
+-          1 | (1,65535) |      40 | f    | (p)=("(185,185),(1,1)")
+-          2 | (2,65535) |      40 | f    | (p)=("(370,370),(186,186)")
+-          3 | (3,65535) |      40 | f    | (p)=("(555,555),(371,371)")
+-          4 | (4,65535) |      40 | f    | (p)=("(740,740),(556,556)")
+-          5 | (5,65535) |      40 | f    | (p)=("(870,870),(741,741)")
+-          6 | (6,65535) |      40 | f    | (p)=("(1000,1000),(871,871)")
+-(6 rows)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM gist_page_items(get_raw_page('test_gist_idx', ...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM gist_page_items(get_raw_page('test_gist_idx', 1), 'test_gist_idx') LIMIT 5;
+- itemoffset | ctid  | itemlen | dead |        keys         
+-------------+-------+---------+------+---------------------
+-          1 | (0,1) |      40 | f    | (p)=("(1,1),(1,1)")
+-          2 | (0,2) |      40 | f    | (p)=("(2,2),(2,2)")
+-          3 | (0,3) |      40 | f    | (p)=("(3,3),(3,3)")
+-          4 | (0,4) |      40 | f    | (p)=("(4,4),(4,4)")
+-          5 | (0,5) |      40 | f    | (p)=("(5,5),(5,5)")
+-(5 rows)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM gist_page_items(get_raw_page('test_gist_idx', ...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- gist_page_items_bytea prints the raw key data as a bytea. The output of that is
+ -- platform-dependent (endianness), so omit the actual key data from the output.
+ SELECT itemoffset, ctid, itemlen FROM gist_page_items_bytea(get_raw_page('test_gist_idx', 0));
+- itemoffset |   ctid    | itemlen 
+-------------+-----------+---------
+-          1 | (1,65535) |      40
+-          2 | (2,65535) |      40
+-          3 | (3,65535) |      40
+-          4 | (4,65535) |      40
+-          5 | (5,65535) |      40
+-          6 | (6,65535) |      40
+-(6 rows)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: ...moffset, ctid, itemlen FROM gist_page_items_bytea(get_raw_pa...
++                                                             ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Suppress the DETAIL message, to allow the tests to work across various
+ -- page sizes and architectures.
+ \set VERBOSITY terse
+ -- Failures with non-GiST index.
+ CREATE INDEX test_gist_btree on test_gist(t);
++ERROR:  relation "test_gist" does not exist
+ SELECT gist_page_items(get_raw_page('test_gist_btree', 0), 'test_gist_btree');
+-ERROR:  "test_gist_btree" is not a GiST index
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 24
+ SELECT gist_page_items(get_raw_page('test_gist_btree', 0), 'test_gist_idx');
+-ERROR:  input page is not a valid GiST page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 24
+ -- Failure with various modes.
+ -- invalid page size
+ SELECT gist_page_items_bytea('aaa'::bytea);
+-ERROR:  invalid page size
++ERROR:  function gist_page_items_bytea(bytea) does not exist at character 8
+ SELECT gist_page_items('aaa'::bytea, 'test_gist_idx'::regclass);
+-ERROR:  invalid page size
++ERROR:  relation "test_gist_idx" does not exist at character 38
+ SELECT gist_page_opaque_info('aaa'::bytea);
+-ERROR:  invalid page size
++ERROR:  function gist_page_opaque_info(bytea) does not exist at character 8
+ -- invalid special area size
+ SELECT * FROM gist_page_opaque_info(get_raw_page('test_gist', 0));
+-ERROR:  input page is not a valid GiST page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 37
+ SELECT gist_page_items_bytea(get_raw_page('test_gist', 0));
+-ERROR:  input page is not a valid GiST page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 30
+ SELECT gist_page_items_bytea(get_raw_page('test_gist_btree', 0));
+-ERROR:  input page is not a valid GiST page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 30
+ \set VERBOSITY default
+ -- Tests with all-zero pages.
+ SHOW block_size \gset
+ SELECT gist_page_items_bytea(decode(repeat('00', :block_size), 'hex'));
+- gist_page_items_bytea 
+------------------------
+-(0 rows)
+-
++ERROR:  function gist_page_items_bytea(bytea) does not exist
++LINE 1: SELECT gist_page_items_bytea(decode(repeat('00', 8192), 'hex...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT gist_page_items(decode(repeat('00', :block_size), 'hex'), 'test_gist_idx'::regclass);
+- gist_page_items 
+------------------
+-(0 rows)
+-
++ERROR:  relation "test_gist_idx" does not exist
++LINE 1: ...ist_page_items(decode(repeat('00', 8192), 'hex'), 'test_gist...
++                                                             ^
+ SELECT gist_page_opaque_info(decode(repeat('00', :block_size), 'hex'));
+- gist_page_opaque_info 
+------------------------
+- 
+-(1 row)
+-
++ERROR:  function gist_page_opaque_info(bytea) does not exist
++LINE 1: SELECT gist_page_opaque_info(decode(repeat('00', 8192), 'hex...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Test gist_page_items with included columns.
+ -- Non-leaf pages contain only the key attributes, and leaf pages contain
+ -- the included attributes.
+ ALTER TABLE test_gist ADD COLUMN i int DEFAULT NULL;
++ERROR:  relation "test_gist" does not exist
+ CREATE INDEX test_gist_idx_inc ON test_gist
+   USING gist (p) INCLUDE (t, i);
++ERROR:  relation "test_gist" does not exist
+ -- Mask the value of the key attribute to avoid alignment issues.
+ SELECT regexp_replace(keys, '\(p\)=\("(.*?)"\)', '(p)=("<val>")') AS keys_nonleaf_1
+   FROM gist_page_items(get_raw_page('test_gist_idx_inc', 0), 'test_gist_idx_inc')
+   WHERE itemoffset = 1;
+- keys_nonleaf_1 
+-----------------
+- (p)=("<val>")
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 2:   FROM gist_page_items(get_raw_page('test_gist_idx_inc', 0),...
++                               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT keys AS keys_leaf_1
+   FROM gist_page_items(get_raw_page('test_gist_idx_inc', 1), 'test_gist_idx_inc')
+   WHERE itemoffset = 1;
+-                     keys_leaf_1                      
+-------------------------------------------------------
+- (p) INCLUDE (t, i)=("(1,1),(1,1)") INCLUDE (1, null)
+-(1 row)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 2:   FROM gist_page_items(get_raw_page('test_gist_idx_inc', 1),...
++                               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ DROP TABLE test_gist;
++ERROR:  table "test_gist" does not exist
+--- hash.out	2024-02-07 15:01:23.106059940 +0300
++++ hash.out	2024-05-25 17:00:33.518888877 +0300
+@@ -5,206 +5,250 @@
+ CREATE INDEX test_hash_part_idx ON test_hash_part USING hash(b);
+ \x
+ SELECT hash_page_type(get_raw_page('test_hash_a_idx', 0));
+--[ RECORD 1 ]--+---------
+-hash_page_type | metapage
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT hash_page_type(get_raw_page('test_hash_a_idx', 0));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_type(get_raw_page('test_hash_a_idx', 1));
+--[ RECORD 1 ]--+-------
+-hash_page_type | bucket
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT hash_page_type(get_raw_page('test_hash_a_idx', 1));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_type(get_raw_page('test_hash_a_idx', 2));
+--[ RECORD 1 ]--+-------
+-hash_page_type | bucket
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT hash_page_type(get_raw_page('test_hash_a_idx', 2));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_type(get_raw_page('test_hash_a_idx', 3));
+--[ RECORD 1 ]--+-------
+-hash_page_type | bucket
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT hash_page_type(get_raw_page('test_hash_a_idx', 3));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_type(get_raw_page('test_hash_a_idx', 4));
+--[ RECORD 1 ]--+-------
+-hash_page_type | bucket
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT hash_page_type(get_raw_page('test_hash_a_idx', 4));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_type(get_raw_page('test_hash_a_idx', 5));
+--[ RECORD 1 ]--+-------
+-hash_page_type | bitmap
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT hash_page_type(get_raw_page('test_hash_a_idx', 5));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_type(get_raw_page('test_hash_a_idx', 6));
+-ERROR:  block number 6 is out of range for relation "test_hash_a_idx"
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT hash_page_type(get_raw_page('test_hash_a_idx', 6));
++                              ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', -1);
+-ERROR:  invalid block number
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', -1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', 0);
+-ERROR:  invalid overflow block number 0
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', 0);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', 1);
+-ERROR:  invalid overflow block number 1
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', 1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', 2);
+-ERROR:  invalid overflow block number 2
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', 2);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', 3);
+-ERROR:  invalid overflow block number 3
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', 3);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', 4);
+-ERROR:  invalid overflow block number 4
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', 4);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', 5);
+-ERROR:  invalid overflow block number 5
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', 5);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_a_idx', 6);
+-ERROR:  block number 6 is out of range for relation "test_hash_a_idx"
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_a_idx', 6);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_bitmap_info('test_hash_part_idx', 1); -- error
+-ERROR:  "test_hash_part_idx" is not a hash index
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_bitmap_info('test_hash_part_idx', 1);
++                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT magic, version, ntuples, bsize, bmsize, bmshift, maxbucket, highmask,
+ lowmask, ovflpoint, firstfree, nmaps, procid, spares, mapp FROM
+ hash_metapage_info(get_raw_page('test_hash_a_idx', 0));
+--[ RECORD 1 ]--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-magic     | 105121344
+-version   | 4
+-ntuples   | 1
+-bsize     | 8152
+-bmsize    | 4096
+-bmshift   | 15
+-maxbucket | 3
+-highmask  | 7
+-lowmask   | 3
+-ovflpoint | 2
+-firstfree | 0
+-nmaps     | 1
+-procid    | 450
+-spares    | {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+-mapp      | {5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_metapage_info(get_raw_page('test_hash_a_idx', 0));
++                           ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT magic, version, ntuples, bsize, bmsize, bmshift, maxbucket, highmask,
+ lowmask, ovflpoint, firstfree, nmaps, procid, spares, mapp FROM
+ hash_metapage_info(get_raw_page('test_hash_a_idx', 1));
+-ERROR:  page is not a hash meta page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_metapage_info(get_raw_page('test_hash_a_idx', 1));
++                           ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT magic, version, ntuples, bsize, bmsize, bmshift, maxbucket, highmask,
+ lowmask, ovflpoint, firstfree, nmaps, procid, spares, mapp FROM
+ hash_metapage_info(get_raw_page('test_hash_a_idx', 2));
+-ERROR:  page is not a hash meta page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_metapage_info(get_raw_page('test_hash_a_idx', 2));
++                           ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT magic, version, ntuples, bsize, bmsize, bmshift, maxbucket, highmask,
+ lowmask, ovflpoint, firstfree, nmaps, procid, spares, mapp FROM
+ hash_metapage_info(get_raw_page('test_hash_a_idx', 3));
+-ERROR:  page is not a hash meta page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_metapage_info(get_raw_page('test_hash_a_idx', 3));
++                           ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT magic, version, ntuples, bsize, bmsize, bmshift, maxbucket, highmask,
+ lowmask, ovflpoint, firstfree, nmaps, procid, spares, mapp FROM
+ hash_metapage_info(get_raw_page('test_hash_a_idx', 4));
+-ERROR:  page is not a hash meta page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_metapage_info(get_raw_page('test_hash_a_idx', 4));
++                           ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT magic, version, ntuples, bsize, bmsize, bmshift, maxbucket, highmask,
+ lowmask, ovflpoint, firstfree, nmaps, procid, spares, mapp FROM
+ hash_metapage_info(get_raw_page('test_hash_a_idx', 5));
+-ERROR:  page is not a hash meta page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_metapage_info(get_raw_page('test_hash_a_idx', 5));
++                           ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT live_items, dead_items, page_size, hasho_prevblkno, hasho_nextblkno,
+ hasho_bucket, hasho_flag, hasho_page_id FROM
+ hash_page_stats(get_raw_page('test_hash_a_idx', 0));
+-ERROR:  page is not a hash bucket or overflow page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_page_stats(get_raw_page('test_hash_a_idx', 0));
++                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT live_items, dead_items, page_size, hasho_prevblkno, hasho_nextblkno,
+ hasho_bucket, hasho_flag, hasho_page_id FROM
+ hash_page_stats(get_raw_page('test_hash_a_idx', 1));
+--[ RECORD 1 ]---+-----------
+-live_items      | 0
+-dead_items      | 0
+-page_size       | 8192
+-hasho_prevblkno | 3
+-hasho_nextblkno | 4294967295
+-hasho_bucket    | 0
+-hasho_flag      | 2
+-hasho_page_id   | 65408
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_page_stats(get_raw_page('test_hash_a_idx', 1));
++                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT live_items, dead_items, page_size, hasho_prevblkno, hasho_nextblkno,
+ hasho_bucket, hasho_flag, hasho_page_id FROM
+ hash_page_stats(get_raw_page('test_hash_a_idx', 2));
+--[ RECORD 1 ]---+-----------
+-live_items      | 0
+-dead_items      | 0
+-page_size       | 8192
+-hasho_prevblkno | 3
+-hasho_nextblkno | 4294967295
+-hasho_bucket    | 1
+-hasho_flag      | 2
+-hasho_page_id   | 65408
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_page_stats(get_raw_page('test_hash_a_idx', 2));
++                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT live_items, dead_items, page_size, hasho_prevblkno, hasho_nextblkno,
+ hasho_bucket, hasho_flag, hasho_page_id FROM
+ hash_page_stats(get_raw_page('test_hash_a_idx', 3));
+--[ RECORD 1 ]---+-----------
+-live_items      | 1
+-dead_items      | 0
+-page_size       | 8192
+-hasho_prevblkno | 3
+-hasho_nextblkno | 4294967295
+-hasho_bucket    | 2
+-hasho_flag      | 2
+-hasho_page_id   | 65408
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_page_stats(get_raw_page('test_hash_a_idx', 3));
++                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT live_items, dead_items, page_size, hasho_prevblkno, hasho_nextblkno,
+ hasho_bucket, hasho_flag, hasho_page_id FROM
+ hash_page_stats(get_raw_page('test_hash_a_idx', 4));
+--[ RECORD 1 ]---+-----------
+-live_items      | 0
+-dead_items      | 0
+-page_size       | 8192
+-hasho_prevblkno | 3
+-hasho_nextblkno | 4294967295
+-hasho_bucket    | 3
+-hasho_flag      | 2
+-hasho_page_id   | 65408
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_page_stats(get_raw_page('test_hash_a_idx', 4));
++                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT live_items, dead_items, page_size, hasho_prevblkno, hasho_nextblkno,
+ hasho_bucket, hasho_flag, hasho_page_id FROM
+ hash_page_stats(get_raw_page('test_hash_a_idx', 5));
+-ERROR:  page is not a hash bucket or overflow page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 3: hash_page_stats(get_raw_page('test_hash_a_idx', 5));
++                        ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx', 0));
+-ERROR:  page is not a hash bucket or overflow page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx'...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx', 1));
+-(0 rows)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx'...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx', 2));
+-(0 rows)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx'...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx', 3));
+--[ RECORD 1 ]----------
+-itemoffset | 1
+-ctid       | (0,1)
+-data       | 2389907270
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx'...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx', 4));
+-(0 rows)
+-
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx'...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx', 5));
+-ERROR:  page is not a hash bucket or overflow page
++ERROR:  function get_raw_page(unknown, integer) does not exist
++LINE 1: SELECT * FROM hash_page_items(get_raw_page('test_hash_a_idx'...
++                                      ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Failure with non-hash index
+ CREATE INDEX test_hash_a_btree ON test_hash USING btree (a);
+ SELECT hash_bitmap_info('test_hash_a_btree', 0);
+-ERROR:  "test_hash_a_btree" is not a hash index
++ERROR:  function hash_bitmap_info(unknown, integer) does not exist
++LINE 1: SELECT hash_bitmap_info('test_hash_a_btree', 0);
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ -- Failure with various modes.
+ -- Suppress the DETAIL message, to allow the tests to work across various
+ -- page sizes and architectures.
+ \set VERBOSITY terse
+ -- invalid page size
+ SELECT hash_metapage_info('aaa'::bytea);
+-ERROR:  invalid page size
++ERROR:  function hash_metapage_info(bytea) does not exist at character 8
+ SELECT hash_page_items('bbb'::bytea);
+-ERROR:  invalid page size
++ERROR:  function hash_page_items(bytea) does not exist at character 8
+ SELECT hash_page_stats('ccc'::bytea);
+-ERROR:  invalid page size
++ERROR:  function hash_page_stats(bytea) does not exist at character 8
+ SELECT hash_page_type('ddd'::bytea);
+-ERROR:  invalid page size
++ERROR:  function hash_page_type(bytea) does not exist at character 8
+ -- invalid special area size
+ SELECT hash_metapage_info(get_raw_page('test_hash', 0));
+-ERROR:  input page is not a valid hash page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 27
+ SELECT hash_page_items(get_raw_page('test_hash', 0));
+-ERROR:  input page is not a valid hash page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 24
+ SELECT hash_page_stats(get_raw_page('test_hash', 0));
+-ERROR:  input page is not a valid hash page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 24
+ SELECT hash_page_type(get_raw_page('test_hash', 0));
+-ERROR:  input page is not a valid hash page
++ERROR:  function get_raw_page(unknown, integer) does not exist at character 23
+ \set VERBOSITY default
+ -- Tests with all-zero pages.
+ SHOW block_size \gset
+ SELECT hash_metapage_info(decode(repeat('00', :block_size), 'hex'));
+-ERROR:  page is not a hash meta page
++ERROR:  function hash_metapage_info(bytea) does not exist
++LINE 1: SELECT hash_metapage_info(decode(repeat('00', 8192), 'hex'))...
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_items(decode(repeat('00', :block_size), 'hex'));
+-ERROR:  page is not a hash bucket or overflow page
++ERROR:  function hash_page_items(bytea) does not exist
++LINE 1: SELECT hash_page_items(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_stats(decode(repeat('00', :block_size), 'hex'));
+-ERROR:  page is not a hash bucket or overflow page
++ERROR:  function hash_page_stats(bytea) does not exist
++LINE 1: SELECT hash_page_stats(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ SELECT hash_page_type(decode(repeat('00', :block_size), 'hex'));
+--[ RECORD 1 ]--+-------
+-hash_page_type | unused
+-
++ERROR:  function hash_page_type(bytea) does not exist
++LINE 1: SELECT hash_page_type(decode(repeat('00', 8192), 'hex'));
++               ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+ DROP TABLE test_hash;
+ DROP TABLE test_hash_part;
+--- checksum.out	2024-02-07 15:01:23.105059940 +0300
++++ checksum.out	2024-05-25 17:00:33.528888878 +0300
+@@ -31,10 +31,7 @@
+     page_checksum(decode(repeat('e6d6', :block_size / 2), 'hex'), blkno) AS checksum_e6d6,
+     page_checksum(decode(repeat('4a5e', :block_size / 2), 'hex'), blkno) AS checksum_4a5e
+   FROM generate_series(0, 100, 50) AS a (blkno);
+- blkno | checksum_01 | checksum_04 | checksum_ff | checksum_abcd | checksum_e6d6 | checksum_4a5e 
+--------+-------------+-------------+-------------+---------------+---------------+---------------
+-     0 |        1175 |       28338 |        3612 |        -30781 |        -16269 |        -27377
+-    50 |        1225 |       28352 |        3598 |        -30795 |        -16251 |        -27391
+-   100 |        1139 |       28438 |        3648 |        -30881 |        -16305 |        -27349
+-(3 rows)
+-
++ERROR:  function page_checksum(bytea, integer) does not exist
++LINE 2:     page_checksum(decode(repeat('01', 8192), 'hex'), blkno) ...
++            ^
++HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+--- oldextversions.out	2024-02-07 15:01:23.106059940 +0300
++++ oldextversions.out	2024-05-25 17:00:33.551888878 +0300
+@@ -1,5 +1,6 @@
+ -- test old extension version entry points
+ DROP EXTENSION pageinspect;
++ERROR:  extension "pageinspect" does not exist
+ CREATE EXTENSION pageinspect VERSION '1.8';
+ CREATE TABLE test1 (a int8, b text);
+ INSERT INTO test1 VALUES (72057594037927937, 'text');
