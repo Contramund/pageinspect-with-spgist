@@ -64,7 +64,7 @@ LANGUAGE C STRICT PARALLEL SAFE;
 
 Note: when node has state "live" it's `pointer_block_num` and `pointer_offset` point to the table being indexed, but if state is "redirect" then theese parameters point to the very index's pages.
 
-***For further information look into file `spgfuncs.c` and tests located in `expect/spgist.out`***
+***For further information look into file `spgfuncs.c`, `pageinspect--1.12--1.13.sql` and tests located in `expect/spgist.out`***
 
 ## Patch
 There is also patch `spgist_support_for_pageinspect.patch` that adds my update to postgres after commit number 902900b308fb38543b95526b1f384bf3cce2f514.
